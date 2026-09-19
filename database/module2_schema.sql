@@ -1,0 +1,16 @@
+USE banking_system;
+
+ALTER TABLE users ADD COLUMN balance DECIMAL(15,2) NOT NULL DEFAULT 0.00;
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  from_user INT NULL,
+  to_user INT NULL,
+  type ENUM('DEPOSIT','WITHDRAW','TRANSFER') NOT NULL,
+  amount DECIMAL(15,2) NOT NULL,
+  balance_after DECIMAL(15,2) NOT NULL,
+  status ENUM('SUCCESS','FAILED') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (from_user) REFERENCES users(id),
+  FOREIGN KEY (to_user) REFERENCES users(id)
+);
