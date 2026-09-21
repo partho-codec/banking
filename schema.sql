@@ -1,12 +1,16 @@
--- Create database if it doesn't already exist
-CREATE DATABASE IF NOT EXISTS banking_system;
 USE banking_system;
 
--- Create users table
-CREATE TABLE IF NOT EXISTS users (
+ALTER TABLE users ADD COLUMN balance DECIMAL(15,2) NOT NULL DEFAULT 0.00;
+
+CREATE TABLE IF NOT EXISTS transactions (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  from_user INT NULL,
+  to_user INT NULL,
+  type ENUM('DEPOSIT','WITHDRAW','TRANSFER') NOT NULL,
+  amount DECIMAL(15,2) NOT NULL,
+  balance_after DECIMAL(15,2) NOT NULL,
+  status ENUM('SUCCESS','FAILED') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (from_user) REFERENCES users(id),
+  FOREIGN KEY (to_user) REFERENCES users(id)
 );

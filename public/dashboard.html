@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Banking System</title>
+  <meta name="description" content="Your personal banking dashboard — view your balance and transaction history.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    :root {
+      --bg-dark:    #0a0f1e;
+      --bg-mid:     #0f172a;
+      --bg-card:    rgba(15, 23, 42, 0.7);
+      --border:     rgba(255,255,255,0.08);
+      --border-hov: rgba(255,255,255,0.16);
+      --blue:       #3b82f6;
+      --blue-dark:  #1d4ed8;
+      --green:      #22c55e;
+      --red:        #ef4444;
+      --amber:      #f59e0b;
+      --text-1:     #f8fafc;
+      --text-2:     #cbd5e1;
+      --text-3:     #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: radial-gradient(ellipse at 20% 10%, #1a2744 0%, #0a0f1e 60%);
+      min-height: 100vh;
+      color: var(--text-1);
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 64px;
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-brand .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--blue), #6366f1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-greeting {
+      font-size: 0.875rem;
+      color: var(--text-2);
+    }
+
+    .nav-greeting span {
+      color: var(--text-1);
+      font-weight: 600;
+    }
+
+    .btn-logout {
+      padding: 8px 18px;
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.45);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 36px 20px 60px;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin-bottom: 14px;
+    }
+
+    /* ── BALANCE HERO CARD ── */
+    .balance-hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 40%, #2563eb 100%);
+      border-radius: 20px;
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(37, 99, 235, 0.35);
+    }
+
+    .balance-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .balance-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: 60px;
+      width: 180px;
+      height: 180px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .balance-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .balance-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 20px;
+      transition: all 0.4s ease;
+    }
+
+    .balance-amount .currency {
+      font-size: 1.6rem;
+      font-weight: 600;
+      vertical-align: super;
+      margin-right: 4px;
+    }
+
+    .account-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .account-avatar {
+      width: 42px;
+      height: 42px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .account-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .account-email {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+    }
+
+    .member-since {
+      position: absolute;
+      bottom: 28px;
+      right: 32px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+      z-index: 1;
+    }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .action-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+    }
+
+    .action-card:hover {
+      border-color: var(--border-hov);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    .action-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin: 0 auto 10px;
+    }
+
+    .icon-green  { background: rgba(34, 197, 94, 0.15);  }
+    .icon-red    { background: rgba(239, 68, 68, 0.15);  }
+    .icon-purple { background: rgba(139, 92, 246, 0.15); }
+
+    .action-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .action-sub {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      margin-top: 3px;
+    }
+
+    /* ── TRANSACTION HISTORY ── */
+    .history-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+
+    .badge-count {
+      font-size: 0.75rem;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-weight: 600;
+    }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--text-3);
+      padding: 11px 20px;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    td {
+      padding: 14px 20px;
+      font-size: 0.875rem;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    /* Type badge */
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-deposit  { background: rgba(34, 197, 94, 0.15);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.25); }
+    .badge-withdraw { background: rgba(239, 68, 68, 0.15);  color: #f87171;  border: 1px solid rgba(239,68,68,0.25); }
+    .badge-transfer { background: rgba(139, 92, 246, 0.15); color: #c084fc;  border: 1px solid rgba(139,92,246,0.25); }
+
+    /* Amount cell */
+    .amount-pos { color: #4ade80; font-weight: 600; }
+    .amount-neg { color: #f87171; font-weight: 600; }
+    .amount-neu { color: #c084fc; font-weight: 600; }
+
+    /* Empty & loading states */
+    .state-box {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--text-3);
+    }
+
+    .state-box .state-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .state-box p {
+      font-size: 0.9rem;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Balance shimmer */
+    .shimmer {
+      display: inline-block;
+      background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 4px;
+      width: 200px;
+      height: 48px;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+
+    .stat-value.green { color: #4ade80; }
+    .stat-value.red   { color: #f87171; }
+    .stat-value.purple{ color: #c084fc; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .quick-actions { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr; }
+      .balance-amount { font-size: 2.2rem; }
+      nav { padding: 0 16px; }
+      main { padding: 20px 14px 50px; }
+      .member-since { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-brand">
+      <div class="logo-icon">🏦</div>
+      NexaBank
+    </div>
+    <div class="nav-right">
+      <span class="nav-greeting">Hello, <span id="navName">—</span></span>
+      <button class="btn-logout" id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- BALANCE HERO -->
+    <div class="section-title">Account Overview</div>
+    <div class="balance-hero">
+      <div class="balance-label">Available Balance</div>
+      <div class="balance-amount" id="balanceDisplay">
+        <span class="shimmer"></span>
+      </div>
+      <div class="account-info">
+        <div class="account-avatar" id="avatarInitial">—</div>
+        <div>
+          <div class="account-name" id="heroName">Loading…</div>
+          <div class="account-email" id="heroEmail">—</div>
+        </div>
+      </div>
+      <div class="member-since" id="memberSince"></div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Deposited</div>
+        <div class="stat-value green" id="statDeposit">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Withdrawn</div>
+        <div class="stat-value red" id="statWithdraw">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Transfers</div>
+        <div class="stat-value purple" id="statTransfer">—</div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-title">Quick Actions</div>
+    <div class="quick-actions">
+      <a class="action-card" href="/banking.html" id="actionDeposit">
+        <div class="action-icon icon-green">💰</div>
+        <div class="action-label">Deposit</div>
+        <div class="action-sub">Add funds</div>
+      </a>
+      <a class="action-card" href="/banking.html" id="actionWithdraw">
+        <div class="action-icon icon-red">💸</div>
+        <div class="action-label">Withdraw</div>
+        <div class="action-sub">Take out funds</div>
+      </a>
+      <a class="action-card" href="/banking.html" id="actionTransfer">
+        <div class="action-icon icon-purple">🔄</div>
+        <div class="action-label">Transfer</div>
+        <div class="action-sub">Send to another user</div>
+      </a>
+    </div>
+
+    <!-- TRANSACTION HISTORY -->
+    <div class="section-title">Transaction History</div>
+    <div class="history-card">
+      <div class="history-header">
+        <h2>All Transactions</h2>
+        <span class="badge-count" id="txCount">0</span>
+      </div>
+      <div class="table-wrapper">
+        <div id="historyContainer">
+          <div class="state-box">
+            <div class="spinner"></div>
+            <p>Loading transactions…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const userId   = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    const userEmail= localStorage.getItem('userEmail');
+
+    // Redirect if not logged in
+    if (!userId) {
+      window.location.href = '/login.html';
+    }
+
+    // Populate static user info immediately
+    document.getElementById('navName').textContent = userName || '—';
+    document.getElementById('heroName').textContent = userName || '—';
+    document.getElementById('heroEmail').textContent = userEmail || '—';
+    document.getElementById('avatarInitial').textContent =
+      userName ? userName.charAt(0).toUpperCase() : '?';
+
+    // ── Logout ──
+    function logout() {
+      fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
+        localStorage.clear();
+        window.location.href = '/login.html';
+      });
+    }
+
+    // ── Format currency ──
+    function fmt(n) {
+      return '৳ ' + Number(n).toLocaleString('en-BD', { minimumFractionDigits: 2 });
+    }
+
+    // ── Fetch dashboard (balance + profile) ──
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`/api/account/dashboard/${userId}`);
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('balanceDisplay').innerHTML =
+            `<span class="currency">৳</span>${Number(data.balance).toLocaleString('en-BD', { minimumFractionDigits: 2 })}`;
+
+          if (data.memberSince) {
+            const d = new Date(data.memberSince);
+            document.getElementById('memberSince').textContent =
+              'Member since ' + d.toLocaleDateString('en-BD', { year: 'numeric', month: 'long' });
+          }
+        } else {
+          document.getElementById('balanceDisplay').textContent = 'N/A';
+        }
+      } catch (e) {
+        document.getElementById('balanceDisplay').textContent = 'Error';
+      }
+    }
+
+    // ── Fetch transaction history ──
+    async function loadHistory() {
+      try {
+        const res = await fetch(`/api/account/history/${userId}`);
+        const data = await res.json();
+        const container = document.getElementById('historyContainer');
+
+        if (!data.success || !data.transactions.length) {
+          container.innerHTML = `
+            <div class="state-box">
+              <div class="state-icon">📭</div>
+              <p>No transactions yet. Make your first deposit!</p>
+            </div>`;
+          document.getElementById('txCount').textContent = '0';
+          // Zero out stats
+          ['statDeposit','statWithdraw','statTransfer'].forEach(id =>
+            document.getElementById(id).textContent = fmt(0));
+          return;
+        }
+
+        const txs = data.transactions;
+        document.getElementById('txCount').textContent = txs.length;
+
+        // Compute stats
+        let totalDeposit = 0, totalWithdraw = 0, totalTransfer = 0;
+        txs.forEach(t => {
+          if (t.type === 'DEPOSIT')  totalDeposit  += Number(t.amount);
+          if (t.type === 'WITHDRAW') totalWithdraw += Number(t.amount);
+          if (t.type === 'TRANSFER') totalTransfer += Number(t.amount);
+        });
+        document.getElementById('statDeposit').textContent  = fmt(totalDeposit);
+        document.getElementById('statWithdraw').textContent = fmt(totalWithdraw);
+        document.getElementById('statTransfer').textContent = fmt(totalTransfer);
+
+        // Build table
+        const rows = txs.map(t => {
+          const uid = Number(userId);
+
+          // Badge
+          const badgeClass = {
+            DEPOSIT: 'badge-deposit',
+            WITHDRAW: 'badge-withdraw',
+            TRANSFER: 'badge-transfer'
+          }[t.type] || '';
+
+          const icon = { DEPOSIT: '⬆', WITHDRAW: '⬇', TRANSFER: '↔' }[t.type] || '';
+
+          // Amount color
+          let amtClass = 'amount-neu';
+          let sign = '';
+          if (t.type === 'DEPOSIT')  { amtClass = 'amount-pos'; sign = '+'; }
+          if (t.type === 'WITHDRAW') { amtClass = 'amount-neg'; sign = '-'; }
+          if (t.type === 'TRANSFER') {
+            if (t.from_user === uid) { amtClass = 'amount-neg'; sign = '-'; }
+            else                     { amtClass = 'amount-pos'; sign = '+'; }
+          }
+
+          // Party info
+          let party = '—';
+          if (t.type === 'DEPOSIT')  party = 'Self';
+          if (t.type === 'WITHDRAW') party = 'Self';
+          if (t.type === 'TRANSFER') {
+            if (t.from_user === uid) party = `To: ${t.to_name || '#' + t.to_user}`;
+            else                     party = `From: ${t.from_name || '#' + t.from_user}`;
+          }
+
+          const date = new Date(t.created_at).toLocaleString('en-BD', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          });
+
+          return `<tr>
+            <td><span class="type-badge ${badgeClass}">${icon} ${t.type}</span></td>
+            <td class="${amtClass}">${sign}${fmt(t.amount)}</td>
+            <td>${fmt(t.balance_after)}</td>
+            <td>${party}</td>
+            <td>${date}</td>
+          </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Party</th>
+                <th>Date & Time</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+
+      } catch (e) {
+        document.getElementById('historyContainer').innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">⚠️</div>
+            <p>Failed to load transactions. Please refresh.</p>
+          </div>`;
+      }
+    }
+
+    // Run on page load
+    loadDashboard();
+    loadHistory();
+  </script>
+</body>
+</html>
