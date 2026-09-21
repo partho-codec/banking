@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banking Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="banking.css">
+</head>
+<body>
+  <h1 class="page-title">Banking Operations</h1>
+  <div class="container">
+
+    <div class="card">
+      <h3>Deposit</h3>
+      <div class="form-group">
+        <label>User ID</label>
+        <input id="depositUserId" type="number" placeholder="Enter your user ID">
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input id="depositAmount" type="number" placeholder="Enter amount">
+      </div>
+      <button class="btn-submit" onclick="deposit()">Deposit</button>
+    </div>
+
+    <div class="card">
+      <h3>Withdraw</h3>
+      <div class="form-group">
+        <label>User ID</label>
+        <input id="withdrawUserId" type="number" placeholder="Enter your user ID">
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input id="withdrawAmount" type="number" placeholder="Enter amount">
+      </div>
+      <button class="btn-submit" onclick="withdraw()">Withdraw</button>
+    </div>
+
+    <div class="card">
+      <h3>Transfer</h3>
+      <div class="form-group">
+        <label>Your User ID</label>
+        <input id="transferFromId" type="number" placeholder="Enter your user ID">
+      </div>
+      <div class="form-group">
+        <label>Recipient User ID</label>
+        <input id="transferToId" type="number" placeholder="Enter recipient user ID">
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input id="transferAmount" type="number" placeholder="Enter amount">
+      </div>
+      <button class="btn-submit" onclick="transfer()">Transfer</button>
+    </div>
+
+    <div class="card">
+      <h3>Transaction History</h3>
+      <div class="form-group">
+        <label>User ID</label>
+        <input id="historyUserId" type="number" placeholder="Enter your user ID">
+      </div>
+      <button class="btn-submit" onclick="loadHistory()">Load History</button>
+      <table id="historyTable"></table>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+  <script src="banking.js"></script>
+</body>
+</html>
