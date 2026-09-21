@@ -168,7 +168,10 @@
         const data = await response.json();
 
         if (response.ok) {
-          alert(data.message || 'Login successful!');
+          // Save user info to localStorage for dashboard use
+          localStorage.setItem('userId', data.user.id);
+          localStorage.setItem('userName', data.user.name);
+          localStorage.setItem('userEmail', data.user.email);
           window.location.href = '/dashboard.html';
         } else {
           alert(data.message || 'Login failed');
